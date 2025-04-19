@@ -1,8 +1,15 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import express from 'express';
+import path from 'path';
 
 const app = express();
+
+// Serve static files from the client build
+app.use(express.static(path.join(__dirname, '../../client/dist')));
+
+// API routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -68,3 +75,8 @@ app.use((req, res, next) => {
     log(`serving on port ${port}`);
   });
 })();
+
+// Handle client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+});
